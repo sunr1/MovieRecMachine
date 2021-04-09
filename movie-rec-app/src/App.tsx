@@ -21,10 +21,12 @@ function App() {
   function renderTable() {
     return data.map((movie: any, i) => (
       <Table.Row>
-        <Table.Cell>{movie.mID}</Table.Cell>
+        <Table.Cell>{movie.id}</Table.Cell>
         <Table.Cell>{movie.title}</Table.Cell>
-        <Table.Cell>{movie.movieYear}</Table.Cell>
-        <Table.Cell>{movie.director}</Table.Cell>
+        <Table.Cell>{movie.popularity}</Table.Cell>
+        <Table.Cell>{movie.release_date}</Table.Cell>
+        <Table.Cell>{movie.budget}</Table.Cell>
+        <Table.Cell>{movie.vote_average}</Table.Cell>
       </Table.Row>
     ))
   }
@@ -37,10 +39,12 @@ function App() {
       <Table celled>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell>mID</Table.HeaderCell>
-            <Table.HeaderCell>title</Table.HeaderCell>
-            <Table.HeaderCell>movieYear</Table.HeaderCell>
-            <Table.HeaderCell>director</Table.HeaderCell>
+            <Table.HeaderCell>ID</Table.HeaderCell>
+            <Table.HeaderCell>Title</Table.HeaderCell>
+            <Table.HeaderCell>Popularity</Table.HeaderCell>
+            <Table.HeaderCell>Release Date</Table.HeaderCell>
+            <Table.HeaderCell>Budget</Table.HeaderCell>
+            <Table.HeaderCell>Vote Average</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
