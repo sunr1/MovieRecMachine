@@ -6,7 +6,7 @@ const db = mysql.createConnection({
     user: 'project',
     password: 'password',
     port: 8889,
-    database: 'MovieDB'
+    database: 'movie_dataset'
 });
 
 db.connect();
