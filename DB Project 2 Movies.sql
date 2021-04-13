@@ -30,13 +30,13 @@ CREATE TABLE IF NOT EXISTS movies_metadata(
         budget INT UNSIGNED NOT NULL,
         genres TEXT,
         homepage VARCHAR(120) NOT NULL,
-        id INT UNSIGNED NOT NULL,
+        id INT UNSIGNED AUTO_INCREMENT NOT NULL,
         imdb_id VARCHAR(10) NOT NULL,
         original_language VARCHAR(2) NOT NULL,
         original_title VARCHAR(70) NOT NULL,
         overview TEXT NOT NULL,
         popularity DECIMAL(8, 6) NOT NULL,
-        poster_path VARCHAR(70) NOT NULL,
+        poster_path VARCHAR(70),
         production_companies TEXT NOT NULL,
         production_countries TEXT NOT NULL,
         release_date DATE NOT NULL,
@@ -96,6 +96,6 @@ INTO TABLE movie_dataset.ratings
         LINES TERMINATED BY '\n'
         IGNORE 1 LINES;
 
-SELECT *
-FROM ratings
+SELECT id, title, popularity
+FROM movies_metadata
 LIMIT 25;
