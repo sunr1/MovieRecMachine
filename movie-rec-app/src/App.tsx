@@ -1,57 +1,27 @@
 import React, { useEffect, useState } from "react";
-import logo from './logo.svg';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
+import Home from './views/Home';
+import AddMovie from "./views/AddMovie";
 import './App.css';
-import { Container, Table } from "semantic-ui-react";
-import axios from "axios";
+import Navbar from "./components/Navbar";
+import { Container } from "semantic-ui-react";
 
 function App() {
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    axios.get('http://localhost:8000/')
-      .then(res => {
-        console.log('data', res.data);
-        setData(res.data);
-      })
-      .catch((err) => {
-        console.log('broken dawg', err);
-      })
-  }, []);
-
-  function renderTable() {
-    return data.map((movie: any, i) => (
-      <Table.Row>
-        <Table.Cell>{movie.id}</Table.Cell>
-        <Table.Cell>{movie.title}</Table.Cell>
-        <Table.Cell>{movie.popularity}</Table.Cell>
-        <Table.Cell>{movie.release_date}</Table.Cell>
-        <Table.Cell>{movie.budget}</Table.Cell>
-        <Table.Cell>{movie.vote_average}</Table.Cell>
-      </Table.Row>
-    ))
-  }
-
   return (
-    <Container>
-      <h1>Movie Rec Machine</h1>
-      <h3>Send some recs my way bro</h3>
+    <Router>
+      <Navbar />
 
-      <Table celled>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>ID</Table.HeaderCell>
-            <Table.HeaderCell>Title</Table.HeaderCell>
-            <Table.HeaderCell>Popularity</Table.HeaderCell>
-            <Table.HeaderCell>Release Date</Table.HeaderCell>
-            <Table.HeaderCell>Budget</Table.HeaderCell>
-            <Table.HeaderCell>Vote Average</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {renderTable()}
-        </Table.Body>
-      </Table>
-    </Container>
+      <Container style={{ padding: '4rem 2rem' }}>
+        <Switch>
+          <Route exact path='/' component={Home} />
+          <Route exact path='/add-movie' component={AddMovie} />
+        </Switch>
+      </Container>
+    </Router>
   );
 }
 
