@@ -5,6 +5,7 @@ import axios from "axios";
 function Home() {
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);
+  const [display, setDisplay] = useState(data);
 
   useEffect(() => {
     axios.get('http://localhost:8000/')
@@ -17,12 +18,16 @@ function Home() {
       })
   }, []);
 
+  useEffect(() => {
+    const searchTerm = search.toLowerCase().trim();
+
+    // @ts-ignore
+    setDisplay(data.filter(movie => movie.title.toLowerCase().trim().includes(searchTerm)));
+  }, [data, search]);
+
   function renderTable() {
-    return data.map((movie: any, i) => (
+    return display.map((movie: any, i) => (
       <Table.Row>
-        <Table.Cell>
-          <Checkbox label='Add' />
-        </Table.Cell>
         <Table.Cell>{movie.id}</Table.Cell>
         <Table.Cell>{movie.title}</Table.Cell>
         <Table.Cell>{movie.popularity}</Table.Cell>
