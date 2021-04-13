@@ -9,6 +9,7 @@ import AddMovie from "./views/AddMovie";
 import './App.css';
 import Navbar from "./components/Navbar";
 import { Container } from "semantic-ui-react";
+import CreateList from "./views/CreateList";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Switch>
           <Route exact path='/' component={Home} />
           <Route exact path='/add-movie' component={AddMovie} />
+          <Route exact path='/create' component={CreateList} />
         </Switch>
       </Container>
     </Router>

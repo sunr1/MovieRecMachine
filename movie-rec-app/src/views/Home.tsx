@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Table, Input, Button } from "semantic-ui-react";
+import { Container, Table, Input, Button, Checkbox } from "semantic-ui-react";
 import axios from "axios";
 
 function Home() {
@@ -20,6 +20,9 @@ function Home() {
   function renderTable() {
     return data.map((movie: any, i) => (
       <Table.Row>
+        <Table.Cell>
+          <Checkbox label='Add' />
+        </Table.Cell>
         <Table.Cell>{movie.id}</Table.Cell>
         <Table.Cell>{movie.title}</Table.Cell>
         <Table.Cell>{movie.popularity}</Table.Cell>
