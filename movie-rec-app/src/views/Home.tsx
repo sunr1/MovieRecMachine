@@ -6,9 +6,10 @@ function Home() {
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);
   const [display, setDisplay] = useState(data);
+  const [page, setPage] = useState(0);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/')
+    axios.get(`http://localhost:8000/?page=${page}`)
       .then(res => {
         console.log('data', res.data);
         setData(res.data);
@@ -16,7 +17,7 @@ function Home() {
       .catch((err) => {
         console.log('broken dawg', err);
       })
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     const searchTerm = search.toLowerCase().trim();
@@ -50,6 +51,8 @@ function Home() {
                value={search}
                onChange={e => setSearch(e.target.value)}
         />
+
+        <Button onClick={() => setPage(page + 1)}>Page</Button>
 
         <Table celled>
           <Table.Header>
