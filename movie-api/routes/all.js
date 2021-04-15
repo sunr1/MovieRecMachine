@@ -10,10 +10,25 @@ router.get('/', (req, res) => {
             LIMIT 25 OFFSET ${offset};
     `;
 
-    db.query(demoQuery, (err, rows, fields) => {
+    db.query(demoQuery, (err, result) => {
         if (err) throw err;
 
-        res.send(rows);
+        res.send(result);
+    });
+});
+
+router.post('/createList', (req, res) => {
+    const { name } = req.body;
+
+    const createListQuery = `
+        INSERT INTO userList(listId)
+        VALUES ("${name}");
+    `
+
+    db.query(createListQuery, (err, result) => {
+        if (err) throw err;
+
+        res.send(result);
     });
 })
 
