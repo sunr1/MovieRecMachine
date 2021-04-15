@@ -12,8 +12,22 @@ router.get('/', (req, res) => {
 
     db.query(demoQuery, (err, rows, fields) => {
         if (err) throw err;
-
         res.send(rows);
+    });
+})
+
+router.post('/createlist', function(req, res) {
+    const listName = req.body.name;
+    const listDescription = req.body.description;
+    const createListQuery = `
+        INSERT INTO userList(name)
+        VALUES ${listName};
+    `;
+
+    db.query(createListQuery, function(err, result) {
+        if (err) throw err;
+        res.send(listName);
+        res.send(listDescription);
     });
 })
 

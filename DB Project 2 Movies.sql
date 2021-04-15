@@ -8,6 +8,14 @@ CREATE DATABASE IF NOT EXISTS movie_dataset;
 
 USE movie_dataset;
 
+DROP TABLE IF EXISTS credits;
+CREATE TABLE IF NOT EXISTS credits(
+		cast TEXT NOT NULL, 
+        crew TEXT NOT NULL,
+        creditsId INT UNSIGNED NOT NULL, 
+        PRIMARY KEY(creditsId)
+) ENGINE=INNODB;
+
 DROP TABLE IF EXISTS keywords;
 CREATE TABLE IF NOT EXISTS keywords(
 		keywordsId INT UNSIGNED NOT NULL, 
@@ -65,7 +73,15 @@ SET sql_mode = "";
 
 -- 2
 LOAD DATA 
-LOCAL INFILE '/Users/connor/Vanderbilt CS Classes/DB/The Movie Dataset/keywords.csv'
+LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/credits.csv'
+INTO TABLE movie_dataset.credits 
+		FIELDS TERMINATED BY ','
+		ENCLOSED BY '"' 
+        LINES TERMINATED BY '\n'
+        IGNORE 1 LINES;
+
+LOAD DATA 
+LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/keywords.csv'
 INTO TABLE movie_dataset.keywords 
 		FIELDS TERMINATED BY ','
 		ENCLOSED BY '"' 
@@ -73,7 +89,7 @@ INTO TABLE movie_dataset.keywords
         IGNORE 1 LINES;
         
 LOAD DATA 
-LOCAL INFILE '/Users/connor/Vanderbilt CS Classes/DB/The Movie Dataset/links.csv'
+LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/links.csv'
 INTO TABLE movie_dataset.links 
 		FIELDS TERMINATED BY ','
 		ENCLOSED BY '"' 
@@ -81,7 +97,7 @@ INTO TABLE movie_dataset.links
         IGNORE 1 LINES;
 
 LOAD DATA 
-LOCAL INFILE '/Users/connor/Vanderbilt CS Classes/DB/The Movie Dataset/movies_metadata.csv'
+LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/movies_metadata.csv'
 INTO TABLE movie_dataset.movies_metadata 
 		FIELDS TERMINATED BY ','
 		ENCLOSED BY '"' 
@@ -89,7 +105,7 @@ INTO TABLE movie_dataset.movies_metadata
         IGNORE 1 LINES;
 
 LOAD DATA 
-LOCAL INFILE '/Users/connor/Vanderbilt CS Classes/DB/The Movie Dataset/ratings.csv'
+LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/ratings.csv'
 INTO TABLE movie_dataset.ratings 
 		FIELDS TERMINATED BY ','
 		ENCLOSED BY '"' 
@@ -99,3 +115,14 @@ INTO TABLE movie_dataset.ratings
 SELECT id, title, popularity
 FROM movies_metadata
 LIMIT 25;
+
+-- 3 
+DROP TABLE IF EXISTS userList;
+CREATE TABLE IF NOT EXISTS userList(
+		listId VARCHAR(70) NOT NULL,
+        description TEXT,
+        PRIMARY KEY (listId)
+) ENGINE=INNODB;   
+
+-- INSERT INTO userList(listId, description, movieId)
+-- VALUES (1, 'b', 1);
