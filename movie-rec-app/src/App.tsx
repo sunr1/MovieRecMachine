@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -11,6 +11,7 @@ import Navbar from "./components/Navbar";
 import { Container } from "semantic-ui-react";
 import CreateList from "./views/CreateList";
 import MovieDetails from "./views/MovieDetails";
+import BrowseLists from "./views/BrowseLists";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route exact path='/add-movie' component={AddMovie} />
           <Route exact path='/create' component={CreateList} />
           <Route exact path='/movie/:id' component={MovieDetails} />
+          <Route exact path='/lists' component={BrowseLists} />
         </Switch>
       </Container>
     </Router>

@@ -34,7 +34,7 @@ function MovieDetails() {
   function detailChecker(key: string, i: number) {
     switch (key) {
       case 'adult':
-        if (data[key] == 0) {
+        if (data[key] === 0) {
           return 'False'
         } else {
           return 'True'

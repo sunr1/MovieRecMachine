@@ -27,6 +27,16 @@ function Home() {
     setDisplay(data.filter(movie => movie.title.toLowerCase().trim().includes(searchTerm)));
   }, [data, search]);
 
+  function pageBack() {
+    if (page > 0) {
+      setPage(page - 1);
+    }
+  }
+
+  function pageNext() {
+    setPage(page + 1);
+  }
+
   function renderTable() {
     return display.map((movie: any, i) => (
       <Table.Row>
@@ -43,8 +53,6 @@ function Home() {
     ))
   }
 
-  console.log(search);
-
   return (
     <Container textAlign='center'>
       <div style={{ padding: '2rem' }}>
@@ -56,7 +64,10 @@ function Home() {
                onChange={e => setSearch(e.target.value)}
         />
 
-        <Button onClick={() => setPage(page + 1)}>Page</Button>
+        <div style={{ paddingTop: '1rem' }}>
+          <Button onClick={pageBack}>{'<'} Page</Button>
+          <Button onClick={pageNext}>Page {'>'}</Button>
+        </div>
 
         <Table celled>
           <Table.Header>
@@ -72,6 +83,11 @@ function Home() {
             {renderTable()}
           </Table.Body>
         </Table>
+
+        <div style={{ paddingTop: '1rem' }}>
+          <Button onClick={pageBack}>{'<'} Page</Button>
+          <Button onClick={pageNext}>Page {'>'}</Button>
+        </div>
       </div>
     </Container>
   )

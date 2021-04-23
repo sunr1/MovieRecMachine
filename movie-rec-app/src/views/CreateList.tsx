@@ -98,6 +98,16 @@ function CreateList() {
     )
   }
 
+  function pageBack() {
+    if (page > 0) {
+      setPage(page - 1);
+    }
+  }
+
+  function pageNext() {
+    setPage(page + 1);
+  }
+
   function createList() {
     // Todo: create a list in DB
   }
@@ -114,9 +124,6 @@ function CreateList() {
           <input name='description' value={listData.description} onChange={handleChange} placeholder='Whiplash' />
         </Form.Field>
 
-        <Button onClick={() => page > 0 ? setPage(page - 1) : setPage(page)}>{'<'} Page</Button>
-        <Button onClick={() => setPage(page + 1)}>Page {'>'}</Button>
-
         <div style={{ padding: '3rem 0' }}>
           <h2>Add Movies to List</h2>
           <Input icon={{ name: 'search' }}
@@ -126,10 +133,17 @@ function CreateList() {
                  value={search}
                  onChange={e => setSearch(e.target.value)}
           />
+          <Button onClick={pageBack}>{'<'} Page</Button>
+          <Button onClick={pageNext}>Page {'>'}</Button>
           {renderMovies()}
         </div>
 
-        <Button primary type='submit'>Create List</Button>
+        <Button onClick={pageBack}>{'<'} Page</Button>
+        <Button onClick={pageNext}>Page {'>'}</Button>
+
+        <div style={{ padding: '1rem 0'}}>
+          <Button primary type='submit'>Create List</Button>
+        </div>
       </Form>
     </Container>
   )
