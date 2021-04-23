@@ -40,24 +40,28 @@ function MovieDetails() {
           return 'True'
         }
       case 'belongs_to_collection':
-        let collection = JSON.parse(data[key].replaceAll("'", '\"'));
-        return <p>{collection.name}</p>
+        if (data[key].trim().length > 0) {
+          let collection = JSON.parse(data[key].replaceAll("'", '"'));
+          return <p>{collection.name}</p>
+        }
+
+        return null
       case 'budget':
         const amount = data[key].toLocaleString('en-US',
           { maximumFractionDigits: 2 });
         return <p>${amount}</p>
       case 'genres':
-        let genres = JSON.parse(data[key].replaceAll("'", '\"'));
+        let genres = JSON.parse(data[key].replaceAll("'", '"'));
         return genres.map((genre: any) => (
           <p>{genre.name}</p>
         ));
       case 'production_companies':
-        let companies = JSON.parse(data[key].replaceAll("'", '\"'));
+        let companies = JSON.parse(data[key].replaceAll("'", '"'));
         return companies.map((co: any) => (
           <p>{co.name}</p>
         ));
       case 'production_countries':
-        let countries = JSON.parse(data[key].replaceAll("'", '\"'));
+        let countries = JSON.parse(data[key].replaceAll("'", '"'));
         return countries.map((country: any) => (
           <p>{country.name}</p>
         ));
