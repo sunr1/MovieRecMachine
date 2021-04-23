@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Checkbox, Container, Form, Input, Table } from "semantic-ui-react";
+import { Link } from 'react-router-dom';
 import axios from "axios";
 
 function CreateList() {
@@ -10,6 +11,9 @@ function CreateList() {
   const [search, setSearch] = useState('');
   const [moviesList, setMoviesList] = useState<String[]>([]);
   const [movies, setMovies] = useState([]);
+  const [page, setPage] = useState(0);
+
+  console.log(moviesList);
 
   useEffect(() => {
     axios.get('http://localhost:8000/')
@@ -21,6 +25,17 @@ function CreateList() {
         console.log('broken dawg', err);
       })
   }, []);
+
+  useEffect(() => {
+    axios.get(`http://localhost:8000/?page=${page}`)
+      .then(res => {
+        console.log('data', res.data);
+        setMovies(res.data);
+      })
+      .catch((err) => {
+        console.log('broken dawg', err);
+      })
+  }, [page]);
 
   function handleCheckChange(e: any, movieId: string) {
     console.log(movieId);
@@ -46,10 +61,14 @@ function CreateList() {
     return movies.map((movie: any, i) => (
       <Table.Row>
         <Table.Cell>
-          <Checkbox onChange={e => handleCheckChange(e, movie.id)} />
+          <Checkbox onChange={e => handleCheckChange(e, movie.id)} checked={moviesList.includes(movie.id)}/>
         </Table.Cell>
         <Table.Cell>{movie.id}</Table.Cell>
-        <Table.Cell>{movie.title}</Table.Cell>
+        <Table.Cell>
+          <Link to={`/movie/${movie.id}`} target='_blank'>
+            {movie.title}
+          </Link>
+        </Table.Cell>
         <Table.Cell>{movie.popularity}</Table.Cell>
         <Table.Cell>{movie.release_date}</Table.Cell>
         <Table.Cell>{movie.budget}</Table.Cell>
@@ -79,9 +98,13 @@ function CreateList() {
     )
   }
 
+  function createList() {
+    // Todo: create a list in DB
+  }
+
   return (
     <Container>
-      <Form>
+      <Form onSubmit={createList}>
         <Form.Field>
           <label>List Name</label>
           <input name='name' value={listData.name} onChange={handleChange} placeholder='Whiplash' />
@@ -91,20 +114,23 @@ function CreateList() {
           <input name='description' value={listData.description} onChange={handleChange} placeholder='Whiplash' />
         </Form.Field>
 
+        <Button onClick={() => page > 0 ? setPage(page - 1) : setPage(page)}>{'<'} Page</Button>
+        <Button onClick={() => setPage(page + 1)}>Page {'>'}</Button>
+
+        <div style={{ padding: '3rem 0' }}>
+          <h2>Add Movies to List</h2>
+          <Input icon={{ name: 'search' }}
+                 iconPosition='left'
+                 fluid
+                 placeholder='Search for films...'
+                 value={search}
+                 onChange={e => setSearch(e.target.value)}
+          />
+          {renderMovies()}
+        </div>
+
         <Button primary type='submit'>Create List</Button>
       </Form>
-
-      <div style={{ padding: '3rem 0' }}>
-        <h2>Add Movies to List</h2>
-        <Input icon={{ name: 'search' }}
-               iconPosition='left'
-               fluid
-               placeholder='Search for films...'
-               value={search}
-               onChange={e => setSearch(e.target.value)}
-        />
-        {renderMovies()}
-      </div>
     </Container>
   )
 }
