@@ -20,6 +20,8 @@ function BrowseLists() {
 
     if (e.target.name === 'date') {
       setFilter('date');
+    } else if (e.target.name === 'today') {
+      setFilter('today');
     } else {
       setFilter('popularity');
     }
@@ -62,10 +64,13 @@ function BrowseLists() {
 
       <h4>Sort By</h4>
       <Button toggle active={filter === 'date'} onClick={handleFilterClick} name='date'>
-        Date Created
+        Recent
       </Button>
       <Button toggle active={filter === 'popularity'} onClick={handleFilterClick} name='popularity'>
         Average Popularity
+      </Button>
+      <Button toggle active={filter === 'today'} onClick={handleFilterClick} name='today'>
+        Created Today
       </Button>
 
       <div style={{ paddingTop: '4rem' }}>

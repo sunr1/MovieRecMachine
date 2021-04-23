@@ -38,19 +38,24 @@ function Home() {
   }
 
   function renderTable() {
-    return display.map((movie: any, i) => (
-      <Table.Row>
-        <Table.Cell>{movie.id}</Table.Cell>
-        <Table.Cell>
-          <Link to={`/movie/${movie.id}`}>
-            {movie.title}
-          </Link>
-        </Table.Cell>
-        <Table.Cell>{movie.overview}</Table.Cell>
-        <Table.Cell>{movie.vote_average}</Table.Cell>
-        <Table.Cell>{movie.popularity}</Table.Cell>
-      </Table.Row>
-    ))
+    return display.map((movie: any, i) => {
+      let date = new Date(movie.release_date).toDateString();
+      date = date.substring(4);
+
+      return (
+        <Table.Row>
+          <Table.Cell>
+            <Link to={`/movie/${movie.id}`}>
+              {movie.title}
+            </Link>
+          </Table.Cell>
+          <Table.Cell>{movie.overview}</Table.Cell>
+          <Table.Cell>{date}</Table.Cell>
+          <Table.Cell>{movie.vote_average}</Table.Cell>
+          <Table.Cell>{movie.popularity}</Table.Cell>
+        </Table.Row>
+      )
+    })
   }
 
   return (
@@ -72,9 +77,9 @@ function Home() {
         <Table celled>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>ID</Table.HeaderCell>
               <Table.HeaderCell>Title</Table.HeaderCell>
               <Table.HeaderCell>Overview</Table.HeaderCell>
+              <Table.HeaderCell>Release Date</Table.HeaderCell>
               <Table.HeaderCell>Vote Average</Table.HeaderCell>
               <Table.HeaderCell>Popularity</Table.HeaderCell>
             </Table.Row>

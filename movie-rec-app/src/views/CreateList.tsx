@@ -16,17 +16,6 @@ function CreateList() {
   console.log(moviesList);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/')
-      .then(res => {
-        console.log('data', res.data);
-        setMovies(res.data);
-      })
-      .catch((err) => {
-        console.log('broken dawg', err);
-      })
-  }, []);
-
-  useEffect(() => {
     axios.get(`http://localhost:8000/?page=${page}`)
       .then(res => {
         console.log('data', res.data);
@@ -58,23 +47,30 @@ function CreateList() {
   }
 
   function renderTableContents() {
-    return movies.map((movie: any, i) => (
-      <Table.Row>
-        <Table.Cell>
-          <Checkbox onChange={e => handleCheckChange(e, movie.id)} checked={moviesList.includes(movie.id)}/>
-        </Table.Cell>
-        <Table.Cell>{movie.id}</Table.Cell>
-        <Table.Cell>
-          <Link to={`/movie/${movie.id}`} target='_blank'>
-            {movie.title}
-          </Link>
-        </Table.Cell>
-        <Table.Cell>{movie.popularity}</Table.Cell>
-        <Table.Cell>{movie.release_date}</Table.Cell>
-        <Table.Cell>{movie.budget}</Table.Cell>
-        <Table.Cell>{movie.vote_average}</Table.Cell>
-      </Table.Row>
-    ))
+    return movies.map((movie: any, i) => {
+      let date = new Date(movie.release_date).toDateString();
+      date = date.substring(4);
+      const budget = movie.budget.toLocaleString('en-US',
+        { maximumFractionDigits: 2 });
+
+      return (
+        <Table.Row>
+          <Table.Cell>
+            <Checkbox onChange={e => handleCheckChange(e, movie.id)} checked={moviesList.includes(movie.id)}/>
+          </Table.Cell>
+          <Table.Cell>{movie.id}</Table.Cell>
+          <Table.Cell>
+            <Link to={`/movie/${movie.id}`} target='_blank'>
+              {movie.title}
+            </Link>
+          </Table.Cell>
+          <Table.Cell>{movie.popularity}</Table.Cell>
+          <Table.Cell>{date}</Table.Cell>
+          <Table.Cell>${budget}</Table.Cell>
+          <Table.Cell>{movie.vote_average}</Table.Cell>
+        </Table.Row>
+      )
+    });
   }
 
   function renderMovies() {

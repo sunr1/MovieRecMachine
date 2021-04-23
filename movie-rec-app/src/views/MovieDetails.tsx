@@ -70,6 +70,13 @@ function MovieDetails() {
         return langs.map((lang: any) => (
           <p>{lang.name}</p>
         ));
+      case 'release_date':
+        const date = new Date(data[key]).toDateString();
+        return <p>{date}</p>
+      case 'revenue':
+        const rev = data[key].toLocaleString('en-US',
+          { maximumFractionDigits: 2 });
+        return <p>${rev}</p>
       case 'runtime':
         return <p>{data[key]} minutes</p>
       default:
