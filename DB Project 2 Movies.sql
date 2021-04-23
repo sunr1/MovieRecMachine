@@ -117,12 +117,40 @@ FROM movies_metadata
 LIMIT 25;
 
 -- 3 
-DROP TABLE IF EXISTS userList;
-CREATE TABLE IF NOT EXISTS userList(
+DROP TABLE IF EXISTS movie_list;
+CREATE TABLE IF NOT EXISTS movie_list(
 		listId VARCHAR(70) NOT NULL,
         description TEXT,
+        date_created DATETIME, 
+        average_popularity DECIMAL(2, 1) NOT NULL,
+		average_rating DECIMAL(2,1) NOT NULL,
         PRIMARY KEY (listId)
 ) ENGINE=INNODB;   
 
--- INSERT INTO userList(listId, description, movieId)
--- VALUES (1, 'b', 1);
+CREATE INDEX popularity 
+ON movies_metadata(popularity);
+
+CREATE INDEX vote_average 
+ON movies_metadata(vote_average);
+
+CREATE INDEX title 
+ON movies_metadata(title);
+
+CREATE INDEX date_created 
+ON movies_list(date_created);
+
+CREATE INDEX average_popularity 
+ON movies_list(average_popularity);
+
+-- CREATE PROCEDURE create_movie_list 
+-- AS INSERT INTO movie_list()
+
+CREATE VIEW movie_metadata_view AS
+SELECT title, overview, vote_average, popularity, release_date
+FROM movies_metadata;
+
+CREATE VIEW movie_list_view AS
+SELECT title, overview, vote_average, popularity, runtime
+FROM movies_list;
+
+
