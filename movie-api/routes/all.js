@@ -5,7 +5,7 @@ const router = express.Router();
 router.get('/', (req, res) => {
     const offset = req.query.page * 25 || 0;
     const query = `
-        SELECT id, title, overview, vote_average, popularity
+        SELECT id, title, overview, vote_average, popularity, release_date, budget
             FROM movies_metadata
             LIMIT 25 OFFSET ${offset};
     `;
