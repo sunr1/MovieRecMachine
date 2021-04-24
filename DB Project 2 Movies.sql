@@ -73,7 +73,7 @@ SET sql_mode = "";
 
 -- 2
 LOAD DATA 
-LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/credits.csv'
+LOCAL INFILE '/Users/sunr/Documents/Databases/credits.csv'
 INTO TABLE movie_dataset.credits 
 		FIELDS TERMINATED BY ','
 		ENCLOSED BY '"' 
@@ -81,7 +81,7 @@ INTO TABLE movie_dataset.credits
         IGNORE 1 LINES;
 
 LOAD DATA 
-LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/keywords.csv'
+LOCAL INFILE '/Users/sunr/Documents/Databases/keywords.csv'
 INTO TABLE movie_dataset.keywords 
 		FIELDS TERMINATED BY ','
 		ENCLOSED BY '"' 
@@ -89,7 +89,7 @@ INTO TABLE movie_dataset.keywords
         IGNORE 1 LINES;
         
 LOAD DATA 
-LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/links.csv'
+LOCAL INFILE '/Users/sunr/Documents/Databases/links.csv'
 INTO TABLE movie_dataset.links 
 		FIELDS TERMINATED BY ','
 		ENCLOSED BY '"' 
@@ -97,7 +97,7 @@ INTO TABLE movie_dataset.links
         IGNORE 1 LINES;
 
 LOAD DATA 
-LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/movies_metadata.csv'
+LOCAL INFILE '/Users/sunr/Documents/Databases/movies_metadata.csv'
 INTO TABLE movie_dataset.movies_metadata 
 		FIELDS TERMINATED BY ','
 		ENCLOSED BY '"' 
@@ -105,16 +105,12 @@ INTO TABLE movie_dataset.movies_metadata
         IGNORE 1 LINES;
 
 LOAD DATA 
-LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/ratings.csv'
+LOCAL INFILE '/Users/sunr/Documents/Databases/ratings.csv'
 INTO TABLE movie_dataset.ratings 
 		FIELDS TERMINATED BY ','
 		ENCLOSED BY '"' 
         LINES TERMINATED BY '\n'
         IGNORE 1 LINES;
-
-SELECT id, title, popularity
-FROM movies_metadata
-LIMIT 25;
 
 -- 3 
 DROP TABLE IF EXISTS movie_list;
@@ -142,9 +138,6 @@ ON movies_list(date_created);
 CREATE INDEX average_popularity 
 ON movies_list(average_popularity);
 
--- CREATE PROCEDURE create_movie_list 
--- AS INSERT INTO movie_list()
-
 CREATE VIEW movie_metadata_view AS
 SELECT title, overview, vote_average, popularity, release_date
 FROM movies_metadata;
@@ -154,3 +147,25 @@ SELECT title, overview, vote_average, popularity, runtime
 FROM movies_list;
 
 
+-- stored procedure 
+DROP PROCEDURE IF EXISTS create_movie_list;
+
+DELIMITER // 
+
+CREATE PROCEDURE create_movie_list(IN listId VARCHAR(70), IN description TEXT, IN date_created DATETIME, IN average_popularity DECIMAL(2, 1), IN average_rating DECIMAL(2, 1))
+
+BEGIN
+
+	INSERT INTO movie_list(listId, description, date_created, average_popularity, average_rating)
+	VALUES (@listId, @description, @date_created, @average_popularity, @average_rating);
+
+END // 
+
+DELIMITER ;
+
+   CALL create_movie_list(
+        name, 
+        "description",
+        NOW(),
+        (SELECT AVG(average_popularity) FROM movie_list),
+        (SELECT AVG(average_rating) FROM movie_list))
