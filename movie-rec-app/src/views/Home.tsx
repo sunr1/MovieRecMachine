@@ -43,7 +43,7 @@ function Home() {
       date = date.substring(4);
 
       return (
-        <Table.Row>
+        <Table.Row key={i}>
           <Table.Cell>
             <Link to={`/movie/${movie.id}`}>
               {movie.title}
