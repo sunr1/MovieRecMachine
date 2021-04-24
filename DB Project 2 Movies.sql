@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS movie_list(
 		listId VARCHAR(70) NOT NULL,
         description TEXT,
         date_created DATETIME, 
-        average_popularity DECIMAL(2, 1) NOT NULL,
+        average_popularity DECIMAL(3, 1) NOT NULL,
 		average_rating DECIMAL(2,1) NOT NULL,
         PRIMARY KEY (listId)
 ) ENGINE=INNODB;   
@@ -146,26 +146,41 @@ CREATE VIEW movie_list_view AS
 SELECT title, overview, vote_average, popularity, runtime
 FROM movies_list;
 
+SELECT * FROM movie_list;
+
 
 -- stored procedure 
 DROP PROCEDURE IF EXISTS create_movie_list;
 
 DELIMITER // 
 
-CREATE PROCEDURE create_movie_list(IN listId VARCHAR(70), IN description TEXT, IN date_created DATETIME, IN average_popularity DECIMAL(2, 1), IN average_rating DECIMAL(2, 1))
+CREATE PROCEDURE create_movie_list(IN listId VARCHAR(70), IN description TEXT, IN date_created DATETIME, IN average_popularity DECIMAL(3, 1), IN average_rating DECIMAL(2, 1))
 
 BEGIN
 
-	INSERT INTO movie_list(listId, description, date_created, average_popularity, average_rating)
-	VALUES (@listId, @description, @date_created, @average_popularity, @average_rating);
+	INSERT INTO movie_list (
+		listId, 
+        description, 
+        date_created, 
+        average_popularity, 
+        average_rating
+	)
+	VALUES (
+		listId, 
+        description, 
+        date_created, 
+        average_popularity, 
+        average_rating
+	);
 
 END // 
 
 DELIMITER ;
 
-   CALL create_movie_list(
-        name, 
-        "description",
+CALL create_movie_list(
+        "Some Other List",
+        "List Description",
         NOW(),
-        (SELECT AVG(average_popularity) FROM movie_list),
-        (SELECT AVG(average_rating) FROM movie_list))
+        10.1,
+        3
+);
