@@ -122,10 +122,30 @@ CREATE TABLE IF NOT EXISTS movie_list(
 		listId VARCHAR(70) NOT NULL,
         description TEXT,
         date_created DATETIME, 
-        average_popularity DECIMAL(2, 1) NOT NULL,
+        average_popularity DECIMAL(3, 1) NOT NULL,
 		average_rating DECIMAL(2,1) NOT NULL,
         PRIMARY KEY (listId)
-) ENGINE=INNODB;   
+) ENGINE=INNODB;
+
+DROP TABLE IF EXISTS movies_in_list;
+CREATE TABLE IF NOT EXISTS movies_in_list(
+		m_id INT UNSIGNED AUTO_INCREMENT,
+        listId VARCHAR(70) NOT NULL,
+        id INT UNSIGNED NOT NULL,
+        CONSTRAINT fk_list_id FOREIGN KEY (listId) 
+			REFERENCES movie_list(listId),
+		CONSTRAINT fk_movie_id FOREIGN KEY (id)
+			REFERENCES movies_metadata(id),
+		PRIMARY KEY(m_id)
+) ENGINE=INNODB;
+
+-- Test data
+INSERT INTO movie_list(listId, description, date_created, average_popularity, average_rating)
+VALUES("my list", "It's an alright list", NOW(), 14.1, 4.1);
+SELECT * FROM movie_list;
+
+INSERT INTO movies_in_list(listId, id)
+VALUES ("my list", 11);
 
 CREATE INDEX popularity 
 ON movies_metadata(popularity);
@@ -150,7 +170,12 @@ SELECT title, overview, vote_average, popularity, release_date
 FROM movies_metadata;
 
 CREATE VIEW movie_list_view AS
-SELECT title, overview, vote_average, popularity, runtime
-FROM movies_list;
+SELECT lst.listId, description, title, overview, vote_average, popularity, release_date
+FROM movie_list lst
+		JOIN movies_in_list con ON lst.listId = con.listId
+        JOIN movies_metadata mov ON con.id = mov.id;
+
+SELECT * FROM movie_list_view
+LIMIT 10;
 
 
