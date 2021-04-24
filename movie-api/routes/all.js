@@ -21,8 +21,8 @@ router.post('/createList', (req, res) => {
     const { name } = req.body;
 
     const createListQuery = `
-        INSERT INTO movie_list(listId, average_popularity)
-        VALUES ("${name}"), SELECT AVG(average_popularity) FROM movie_list;
+        INSERT INTO movie_list(listId, average_popularity, average_rating)
+        VALUES ("${name}"), SELECT AVG(average_popularity) FROM movie_list, SELECT AVG(average_rating) FROM movie_list;
     `
 
     db.query(createListQuery, (err, result) => {
