@@ -21,7 +21,6 @@ function App() {
       <Container style={{ padding: '4rem 2rem' }}>
         <Switch>
           <Route exact path='/' component={Home} />
-          <Route exact path='/add-movie' component={AddMovie} />
           <Route exact path='/create' component={CreateList} />
           <Route exact path='/movie/:id' component={MovieDetails} />
           <Route exact path='/lists' component={BrowseLists} />

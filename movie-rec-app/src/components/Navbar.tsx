@@ -10,7 +10,6 @@ function Navbar() {
       <h1>Movie Rec Machine</h1>
 
       <Menu.Item onClick={() => history.push('/')}>Home</Menu.Item>
-      <Menu.Item onClick={() => history.push('/add-movie')}>Add Movie</Menu.Item>
       <Menu.Item onClick={() => history.push('/create')}>Create List</Menu.Item>
       <Menu.Item onClick={() => history.push('/lists')}>Browse Lists</Menu.Item>
     </Menu>
