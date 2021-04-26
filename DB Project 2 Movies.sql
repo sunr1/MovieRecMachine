@@ -159,7 +159,7 @@ CREATE INDEX average_popularity
 ON movies_list(average_popularity);
 
 CREATE VIEW movie_metadata_view AS
-SELECT title, overview, vote_average, popularity, release_date
+SELECT id, title, overview, vote_average, popularity, release_date
 FROM movies_metadata;
 
 CREATE VIEW movie_popularity_view AS
@@ -178,10 +178,9 @@ FROM movie_list lst
 		JOIN movies_in_list con ON lst.listId = con.listId
         JOIN movies_metadata mov ON con.id = mov.id;
 
-SELECT * FROM movie_list_view
-LIMIT 10;
+SELECT * FROM movie_list_view;
 
-SELECT * FROM movie_list;
+SELECT * FROM movies_metadata LIMIT 10;
 
 
 -- stored procedure 
