@@ -97,6 +97,24 @@ router.get('/getLists', (req, res) => {
     })
 });
 
+router.get('/getListOrder', (req, res) => {
+    const { orderBy } = req.query;
+    const query = `
+        SELECT lst.listId, AVG(popularity) AS avg_pop, date_created
+            FROM movie_list lst
+                JOIN movies_in_list con ON lst.listId = con.listId
+                JOIN movies_metadata mov ON con.id = mov.id
+            GROUP BY lst.listId
+            ORDER BY ${orderBy} DESC;
+    `;
+
+    db.query(query, (err, result) => {
+        if (err) throw err;
+
+        res.send(result);
+    })
+});
+
 router.get('/')
 
 module.exports = router;
