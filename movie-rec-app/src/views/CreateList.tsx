@@ -46,8 +46,6 @@ function CreateList() {
 
   function renderTableContents() {
     return movies.map((movie: any, i) => {
-      console.log('Movie:', movie);
-
       let date = new Date(movie.release_date).toDateString();
       date = date.substring(4);
 
@@ -104,13 +102,24 @@ function CreateList() {
     setPage(page + 1);
   }
 
-  function createList() {
-    // Todo: create a list in DB
+  async function createList() {
+    const newList = await axios.post('http://localhost:8000/createList', listData)
+    console.log('Made list:', listData.name);
+
+    for (let i = 0; i < moviesList.length; i++) {
+      const movieData = {
+        listId: listData.name,
+        movieId: moviesList[i]
+      }
+      const newMovie = await axios.post('http://localhost:8000/addMovieToList', movieData);
+
+      console.log('Added movie:', newMovie);
+    }
   }
 
   return (
     <Container>
-      <Form onSubmit={createList}>
+      <Form onSubmit={createList} style={{ paddingTop: '1rem' }}>
         <Form.Field>
           <label>List Name</label>
           <input name='name' value={listData.name} onChange={handleChange} placeholder='Whiplash' />
