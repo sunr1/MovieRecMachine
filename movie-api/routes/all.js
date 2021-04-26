@@ -40,11 +40,11 @@ router.post('/createList', (req, res) => {
 
     const createListQuery = `
         CALL create_movie_list(
-        "${name}", 
-        "${description}",
-        NOW(),
-        (SELECT AVG(average_popularity) FROM movie_list),
-        (SELECT AVG(average_rating) FROM movie_list))
+            "${name}", 
+            "${description}",
+            NOW(),
+            (SELECT AVG(average_popularity) FROM movie_list),
+            (SELECT AVG(average_rating) FROM movie_list))
     `;
 
     db.query(createListQuery, (err, result) => {
@@ -53,6 +53,22 @@ router.post('/createList', (req, res) => {
         res.send(result);
     });
 });
+
+router.post('/addMovieToList', (req, res) => {
+    const {listId, movieId} = req.body;
+
+    const addMovieQuery = `
+        CALL add_movie_to_list(
+            "${listId}",
+            ${movieId})
+        `;
+
+    db.query(addMovieQuery, (err, result) => {
+        if (err) throw err;
+
+        res.send(result);
+    })
+})
 
 router.get('/movie', (req, res) => {
     const id = req.query.id;
