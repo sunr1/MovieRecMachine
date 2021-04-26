@@ -129,6 +129,7 @@ function CreateList() {
   async function createList(e: any) {
     e.preventDefault();
 
+    console.log('list', listData);
     const newList = await axios.post('http://localhost:8000/createList', listData)
     console.log('Made list:', listData.name);
 

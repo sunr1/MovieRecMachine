@@ -21,6 +21,7 @@ function BrowseLists() {
   const [lists, setLists] = useState<any>({});
   const [filter, setFilter] = useState<string>('date');
   const [listOrder, setListOrder] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios.get('http://localhost:8000/getLists')
@@ -46,6 +47,7 @@ function BrowseLists() {
 
         console.log('Got:', userLists);
         setLists(userLists);
+        setLoading(false);
       });
 
     let orderBy = '';
@@ -93,6 +95,7 @@ function BrowseLists() {
   }
 
   function renderLists(name: string, list: ListType) {
+    console.log('List:', list);
     const { movies, description } = list;
 
     return (
@@ -118,8 +121,10 @@ function BrowseLists() {
   }
 
   function renderWithFilters() {
+    console.log('list order:', listOrder);
     switch (filter) {
       case 'date':
+        console.log('lists:', lists);
         return listOrder.map((key: string) => renderLists(key, lists[key]));
       case 'popularity':
         return listOrder.map((key: string) => renderLists(key, lists[key]));
@@ -139,7 +144,7 @@ function BrowseLists() {
       </Button>
 
       <div style={{ paddingTop: '4rem' }}>
-        {renderWithFilters()}
+        {!loading && renderWithFilters()}
       </div>
     </Container>
   )
