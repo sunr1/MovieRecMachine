@@ -4,9 +4,27 @@ const router = express.Router();
 
 router.get('/', (req, res) => {
     const offset = req.query.page * 50 || 0;
+    const filter = req.query.filter;
+
+    let view
+    switch (filter) {
+        case 'none':
+            view = 'movie_metadata_view';
+            break;
+        case 'popularity':
+            view = 'movie_popularity_view';
+            break;
+        case 'vote':
+            view = 'movie_rating_view';
+            break;
+        default:
+            view = 'movie_metadata_view';
+            break;
+    }
+
     const query = `
         SELECT * 
-            FROM movie_metadata_view
+            FROM ${view}
             LIMIT 50 OFFSET ${offset};
     `;
 
@@ -57,6 +75,8 @@ router.get('/getLists', (req, res) => {
 
         res.send(result);
     })
-})
+});
+
+router.get('/')
 
 module.exports = router;
