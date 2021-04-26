@@ -2,12 +2,13 @@
 -- rebecca.sun@vanderbilt.edu, connor.r.waslo@vanderbilt.edu
 -- Project Part 2
 
--- a database of movies 
+-- Create database
 DROP DATABASE IF EXISTS movie_dataset; 
 CREATE DATABASE IF NOT EXISTS movie_dataset;
 
 USE movie_dataset;
 
+-- Create tables
 DROP TABLE IF EXISTS credits;
 CREATE TABLE IF NOT EXISTS credits(
 		cast TEXT NOT NULL, 
@@ -67,11 +68,33 @@ CREATE TABLE IF NOT EXISTS ratings(
         rating DECIMAL(2,1) NOT NULL,
         unixTime BIGINT NOT NULL,
         PRIMARY KEY (userId, movieId)
-) ENGINE=INNODB;        
+) ENGINE=INNODB;
+
+DROP TABLE IF EXISTS movie_list;
+CREATE TABLE IF NOT EXISTS movie_list(
+		listId VARCHAR(70) NOT NULL,
+        description TEXT,
+        date_created DATETIME, 
+        average_popularity DECIMAL(3, 1) NOT NULL,
+		average_rating DECIMAL(2,1) NOT NULL,
+        PRIMARY KEY (listId)
+) ENGINE=INNODB;
+
+DROP TABLE IF EXISTS movies_in_list;
+CREATE TABLE IF NOT EXISTS movies_in_list(
+		m_id INT UNSIGNED AUTO_INCREMENT,
+        listId VARCHAR(70) NOT NULL,
+        id INT UNSIGNED NOT NULL,
+        CONSTRAINT fk_list_id FOREIGN KEY (listId) 
+			REFERENCES movie_list(listId),
+		CONSTRAINT fk_movie_id FOREIGN KEY (id)
+			REFERENCES movies_metadata(id),
+		PRIMARY KEY(m_id)
+) ENGINE=INNODB;  
 
 SET sql_mode = "";
 
--- 2
+-- Insert data from CSVs into tables
 LOAD DATA 
 LOCAL INFILE '/Users/sunr/Documents/Databases/credits.csv'
 INTO TABLE movie_dataset.credits 
@@ -112,37 +135,7 @@ INTO TABLE movie_dataset.ratings
         LINES TERMINATED BY '\n'
         IGNORE 1 LINES;
 
--- 3 
-DROP TABLE IF EXISTS movie_list;
-CREATE TABLE IF NOT EXISTS movie_list(
-		listId VARCHAR(70) NOT NULL,
-        description TEXT,
-        date_created DATETIME, 
-        average_popularity DECIMAL(3, 1) NOT NULL,
-		average_rating DECIMAL(2,1) NOT NULL,
-        PRIMARY KEY (listId)
-) ENGINE=INNODB;
-
-DROP TABLE IF EXISTS movies_in_list;
-CREATE TABLE IF NOT EXISTS movies_in_list(
-		m_id INT UNSIGNED AUTO_INCREMENT,
-        listId VARCHAR(70) NOT NULL,
-        id INT UNSIGNED NOT NULL,
-        CONSTRAINT fk_list_id FOREIGN KEY (listId) 
-			REFERENCES movie_list(listId),
-		CONSTRAINT fk_movie_id FOREIGN KEY (id)
-			REFERENCES movies_metadata(id),
-		PRIMARY KEY(m_id)
-) ENGINE=INNODB;
-
--- Test data
-INSERT INTO movie_list(listId, description, date_created, average_popularity, average_rating)
-VALUES("my list", "It's an alright list", NOW(), 14.1, 4.1);
-SELECT * FROM movie_list;
-
-INSERT INTO movies_in_list(listId, id)
-VALUES ("my list", 11);
-
+-- Indexes
 CREATE INDEX popularity 
 ON movies_metadata(popularity);
 
@@ -158,29 +151,42 @@ ON movies_list(date_created);
 CREATE INDEX average_popularity 
 ON movies_list(average_popularity);
 
+-- Views
 CREATE VIEW movie_metadata_view AS
-SELECT title, overview, vote_average, popularity, release_date
+SELECT id, title, overview, vote_average, popularity, release_date
 FROM movies_metadata;
 
+CREATE VIEW movie_popularity_view AS
+SELECT * 
+FROM movie_metadata_view
+ORDER BY popularity DESC;
+
+CREATE VIEW movie_rating_view AS
+SELECT *
+FROM movie_metadata_view
+ORDER BY vote_average DESC;
+
 CREATE VIEW movie_list_view AS
-SELECT lst.listId, description, title, overview, vote_average, popularity, release_date
+SELECT lst.listId, description, average_popularity, date_created, title, overview, vote_average, popularity, release_date
 FROM movie_list lst
 		JOIN movies_in_list con ON lst.listId = con.listId
         JOIN movies_metadata mov ON con.id = mov.id;
+        
+-- Relevant select query
+SELECT lst.listId, AVG(popularity) AS avg_pop, date_created
+FROM movie_list lst
+		JOIN movies_in_list con ON lst.listId = con.listId
+        JOIN movies_metadata mov ON con.id = mov.id
+GROUP BY lst.listId
+ORDER BY avg_pop DESC;
 
-SELECT * FROM movie_list_view
-LIMIT 10;
-
-SELECT * FROM movie_list;
-
-
--- stored procedure 
+-- Stored procedures
 DROP PROCEDURE IF EXISTS create_movie_list;
 
 DELIMITER // 
 
-CREATE PROCEDURE create_movie_list(IN listId VARCHAR(70), IN description TEXT, IN date_created DATETIME, IN average_popularity DECIMAL(3, 1), IN average_rating DECIMAL(2, 1))
-
+CREATE PROCEDURE create_movie_list(IN listId VARCHAR(70), IN description TEXT, 
+		IN date_created DATETIME, IN average_popularity DECIMAL(3, 1), IN average_rating DECIMAL(2, 1))
 BEGIN
 
 	INSERT INTO movie_list (
@@ -202,10 +208,23 @@ END //
 
 DELIMITER ;
 
-CALL create_movie_list(
-        "Some Other List",
-        "List Description",
-        NOW(),
-        10.1,
-        3
-);
+
+DROP PROCEDURE IF EXISTS add_movie_to_list;
+
+DELIMITER // 
+
+CREATE PROCEDURE add_movie_to_list(IN listId VARCHAR(70), IN movieId TEXT)
+BEGIN
+
+	INSERT INTO movies_in_list (
+		listId, 
+        id
+	)
+	VALUES (
+		listId, 
+        movieId
+	);
+
+END // 
+
+DELIMITER ;

@@ -87,7 +87,7 @@ function Home() {
             No Filter
           </Button>
           <Button toggle active={filter === 'popularity'} onClick={handleFilterClick} name='popularity'>
-            Average Popularity
+            Popularity
           </Button>
           <Button toggle active={filter === 'vote'} onClick={handleFilterClick} name='vote'>
             Vote Average

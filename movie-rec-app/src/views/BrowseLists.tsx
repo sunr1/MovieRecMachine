@@ -20,6 +20,7 @@ interface ListType {
 function BrowseLists() {
   const [lists, setLists] = useState<any>({});
   const [filter, setFilter] = useState<string>('date');
+  const [listOrder, setListOrder] = useState<string[]>([]);
 
   useEffect(() => {
     axios.get('http://localhost:8000/getLists')
@@ -46,10 +47,25 @@ function BrowseLists() {
         console.log('Got:', userLists);
         setLists(userLists);
       });
-  }, []);
 
-  useEffect(() => {
-    // Todo: Sort lists by new filter
+    let orderBy = '';
+    if (filter === 'date') {
+      orderBy = 'date_created'
+    } else if (filter === 'popularity') {
+      orderBy = 'avg_pop'
+    }
+
+    axios.get(`http://localhost:8000/getListOrder?orderBy=${orderBy}`)
+      .then(res => {
+        const lists = res.data;
+        let order: string[] = [];
+        lists.forEach((list: { listId: string }) => {
+          order.push(list.listId);
+        });
+
+        console.log(order);
+        setListOrder(order);
+      })
   }, [filter]);
 
   function handleFilterClick(e: any) {
@@ -59,8 +75,6 @@ function BrowseLists() {
 
     if (e.target.name === 'date') {
       setFilter('date');
-    } else if (e.target.name === 'today') {
-      setFilter('today');
     } else {
       setFilter('popularity');
     }
@@ -103,6 +117,15 @@ function BrowseLists() {
     )
   }
 
+  function renderWithFilters() {
+    switch (filter) {
+      case 'date':
+        return listOrder.map((key: string) => renderLists(key, lists[key]));
+      case 'popularity':
+        return listOrder.map((key: string) => renderLists(key, lists[key]));
+    }
+  }
+
   return (
     <Container>
       <h1>User Movie Lists</h1>
@@ -114,12 +137,9 @@ function BrowseLists() {
       <Button toggle active={filter === 'popularity'} onClick={handleFilterClick} name='popularity'>
         Average Popularity
       </Button>
-      <Button toggle active={filter === 'today'} onClick={handleFilterClick} name='today'>
-        Created Today
-      </Button>
 
       <div style={{ paddingTop: '4rem' }}>
-        {Object.keys(lists).map((key: string) => renderLists(key, lists[key]))}
+        {renderWithFilters()}
       </div>
     </Container>
   )

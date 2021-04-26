@@ -40,11 +40,11 @@ router.post('/createList', (req, res) => {
 
     const createListQuery = `
         CALL create_movie_list(
-        "${name}", 
-        "${description}",
-        NOW(),
-        (SELECT AVG(average_popularity) FROM movie_list),
-        (SELECT AVG(average_rating) FROM movie_list))
+            "${name}", 
+            "${description}",
+            NOW(),
+            (SELECT AVG(average_popularity) FROM movie_list),
+            (SELECT AVG(average_rating) FROM movie_list))
     `;
 
     db.query(createListQuery, (err, result) => {
@@ -53,6 +53,22 @@ router.post('/createList', (req, res) => {
         res.send(result);
     });
 });
+
+router.post('/addMovieToList', (req, res) => {
+    const {listId, movieId} = req.body;
+
+    const addMovieQuery = `
+        CALL add_movie_to_list(
+            "${listId}",
+            ${movieId})
+        `;
+
+    db.query(addMovieQuery, (err, result) => {
+        if (err) throw err;
+
+        res.send(result);
+    })
+})
 
 router.get('/movie', (req, res) => {
     const id = req.query.id;
@@ -72,6 +88,24 @@ router.get('/movie', (req, res) => {
 router.get('/getLists', (req, res) => {
     const query = `
         SELECT * FROM movie_list_view;
+    `;
+
+    db.query(query, (err, result) => {
+        if (err) throw err;
+
+        res.send(result);
+    })
+});
+
+router.get('/getListOrder', (req, res) => {
+    const { orderBy } = req.query;
+    const query = `
+        SELECT lst.listId, AVG(popularity) AS avg_pop, date_created
+            FROM movie_list lst
+                JOIN movies_in_list con ON lst.listId = con.listId
+                JOIN movies_metadata mov ON con.id = mov.id
+            GROUP BY lst.listId
+            ORDER BY ${orderBy} DESC;
     `;
 
     db.query(query, (err, result) => {
