@@ -1,12 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Container, Table } from "semantic-ui-react";
+import axios from 'axios';
+
+interface MovieType {
+  listId: string
+  description: string
+  title: string
+  overview: string
+  vote_average: number
+  popularity: number
+  release_date: Date
+}
+
+interface ListType {
+  description: string
+  movies: MovieType[]
+}
 
 function BrowseLists() {
-  const [lists, setLists] = useState([]);
+  const [lists, setLists] = useState<any>({});
   const [filter, setFilter] = useState<string>('date');
 
   useEffect(() => {
-    // Todo: API call pulling lists
+    axios.get('http://localhost:8000/getLists')
+      .then(res => {
+        const movies = res.data;
+
+        // Restructure data so that movies are grouped into objects by listId
+        let userLists = {};
+        movies.forEach((movie: object) => {
+          // @ts-ignore
+          if (userLists[movie.listId]) {
+            // @ts-ignore
+            userLists[movie.listId].movies.push(movie);
+          } else {
+            // @ts-ignore
+            userLists[movie.listId] = {
+              movies: [movie],
+              // @ts-ignore
+              description: movie.description
+            };
+          }
+        })
+
+        console.log('Got:', userLists);
+        setLists(userLists);
+      });
   }, []);
 
   useEffect(() => {
@@ -27,31 +66,37 @@ function BrowseLists() {
     }
   }
 
-  function listContent() {
+  function listContent(movie: MovieType) {
     return (
       <Table.Row>
-        <Table.Cell>Movie</Table.Cell>
+        <Table.Cell>{movie.title}</Table.Cell>
+        <Table.Cell>{movie.overview}</Table.Cell>
+        <Table.Cell>{movie.vote_average}</Table.Cell>
+        <Table.Cell>{movie.popularity}</Table.Cell>
+        <Table.Cell>{new Date(movie.release_date).toDateString()}</Table.Cell>
       </Table.Row>
-    )
+    );
   }
 
-  function renderLists() {
+  function renderLists(name: string, list: ListType) {
+    const { movies, description } = list;
+
     return (
       <div style={{ marginBottom: '4rem' }}>
-        <h1>List Name</h1>
-        <h4>List Description</h4>
+        <h1>{name}</h1>
+        <h4>{description}</h4>
         <Table celled>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>ID</Table.HeaderCell>
               <Table.HeaderCell>Title</Table.HeaderCell>
               <Table.HeaderCell>Overview</Table.HeaderCell>
               <Table.HeaderCell>Vote Average</Table.HeaderCell>
               <Table.HeaderCell>Popularity</Table.HeaderCell>
+              <Table.HeaderCell>Release Date</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {listContent()}
+            {movies.map(movie => listContent(movie))}
           </Table.Body>
         </Table>
       </div>
@@ -74,7 +119,7 @@ function BrowseLists() {
       </Button>
 
       <div style={{ paddingTop: '4rem' }}>
-        {renderLists()}
+        {Object.keys(lists).map((key: string) => renderLists(key, lists[key]))}
       </div>
     </Container>
   )

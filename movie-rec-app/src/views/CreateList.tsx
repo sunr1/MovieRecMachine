@@ -13,8 +13,6 @@ function CreateList() {
   const [movies, setMovies] = useState([]);
   const [page, setPage] = useState(0);
 
-  console.log(moviesList);
-
   useEffect(() => {
     axios.get(`http://localhost:8000/?page=${page}`)
       .then(res => {
@@ -48,25 +46,24 @@ function CreateList() {
 
   function renderTableContents() {
     return movies.map((movie: any, i) => {
+      console.log('Movie:', movie);
+
       let date = new Date(movie.release_date).toDateString();
       date = date.substring(4);
-      const budget = movie.budget.toLocaleString('en-US',
-        { maximumFractionDigits: 2 });
 
       return (
         <Table.Row>
           <Table.Cell>
             <Checkbox onChange={e => handleCheckChange(e, movie.id)} checked={moviesList.includes(movie.id)}/>
           </Table.Cell>
-          <Table.Cell>{movie.id}</Table.Cell>
           <Table.Cell>
             <Link to={`/movie/${movie.id}`} target='_blank'>
               {movie.title}
             </Link>
           </Table.Cell>
+          <Table.Cell>{movie.overview}</Table.Cell>
           <Table.Cell>{movie.popularity}</Table.Cell>
           <Table.Cell>{date}</Table.Cell>
-          <Table.Cell>${budget}</Table.Cell>
           <Table.Cell>{movie.vote_average}</Table.Cell>
         </Table.Row>
       )
@@ -74,16 +71,19 @@ function CreateList() {
   }
 
   function renderMovies() {
+    if (movies.length === 0) {
+      return null;
+    }
+
     return (
       <Table celled>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Add</Table.HeaderCell>
-            <Table.HeaderCell>ID</Table.HeaderCell>
             <Table.HeaderCell>Title</Table.HeaderCell>
+            <Table.HeaderCell>Description</Table.HeaderCell>
             <Table.HeaderCell>Popularity</Table.HeaderCell>
             <Table.HeaderCell>Release Date</Table.HeaderCell>
-            <Table.HeaderCell>Budget</Table.HeaderCell>
             <Table.HeaderCell>Vote Average</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
