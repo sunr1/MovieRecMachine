@@ -189,8 +189,8 @@ DROP PROCEDURE IF EXISTS create_movie_list;
 
 DELIMITER // 
 
-CREATE PROCEDURE create_movie_list(IN listId VARCHAR(70), IN description TEXT, IN date_created DATETIME, IN average_popularity DECIMAL(3, 1), IN average_rating DECIMAL(2, 1))
-
+CREATE PROCEDURE create_movie_list(IN listId VARCHAR(70), IN description TEXT, 
+		IN date_created DATETIME, IN average_popularity DECIMAL(3, 1), IN average_rating DECIMAL(2, 1))
 BEGIN
 
 	INSERT INTO movie_list (
@@ -212,10 +212,23 @@ END //
 
 DELIMITER ;
 
-CALL create_movie_list(
-        "Some Other List",
-        "List Description",
-        NOW(),
-        10.1,
-        3
-);
+
+DROP PROCEDURE IF EXISTS add_movie_to_list;
+
+DELIMITER // 
+
+CREATE PROCEDURE add_movie_to_list(IN listId VARCHAR(70), IN movieId TEXT)
+BEGIN
+
+	INSERT INTO movies_in_list (
+		listId, 
+        id
+	)
+	VALUES (
+		listId, 
+        movieId
+	);
+
+END // 
+
+DELIMITER ;
