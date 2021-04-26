@@ -35,6 +35,26 @@ router.get('/', (req, res) => {
     });
 });
 
+router.get('/search', (req, res) => {
+    const { term } = req.query;
+    const offset = req.query.page * 50 || 0;
+
+    const searchQuery = `
+        SELECT *
+            FROM movie_metadata_view
+            WHERE title LIKE '%${term}%'
+            LIMIT 50 OFFSET ${offset}
+    `
+
+    console.log(searchQuery);
+
+    db.query(searchQuery, (err, result) => {
+        if (err) throw err;
+
+        res.send(result);
+    });
+})
+
 router.post('/createList', (req, res) => {
     const { name, description } = req.body;
 
@@ -114,7 +134,5 @@ router.get('/getListOrder', (req, res) => {
         res.send(result);
     })
 });
-
-router.get('/')
 
 module.exports = router;
