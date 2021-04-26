@@ -169,8 +169,18 @@ CREATE VIEW movie_metadata_view AS
 SELECT title, overview, vote_average, popularity, release_date
 FROM movies_metadata;
 
+CREATE VIEW movie_popularity_view AS
+SELECT * 
+FROM movie_metadata_view
+ORDER BY popularity DESC;
+
+CREATE VIEW movie_rating_view AS
+SELECT *
+FROM movie_metadata_view
+ORDER BY vote_average DESC;
+
 CREATE VIEW movie_list_view AS
-SELECT lst.listId, description, title, overview, vote_average, popularity, release_date
+SELECT lst.listId, description, average_popularity, date_created, title, overview, vote_average, popularity, release_date
 FROM movie_list lst
 		JOIN movies_in_list con ON lst.listId = con.listId
         JOIN movies_metadata mov ON con.id = mov.id;
