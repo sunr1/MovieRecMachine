@@ -11,15 +11,26 @@ function Home() {
   const [page, setPage] = useState(0);
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/?page=${page}&filter=${filter}`)
-      .then(res => {
-        console.log('data', res.data);
-        setData(res.data);
-      })
-      .catch((err) => {
-        console.log('broken dawg', err);
-      });
-  }, [page, filter]);
+    if (search.trim() === '') {
+      axios.get(`http://localhost:8000/?page=${page}&filter=${filter}`)
+        .then(res => {
+          console.log('data', res.data);
+          setData(res.data);
+        })
+        .catch((err) => {
+          console.log('broken dawg', err);
+        });
+    } else {
+      axios.get(`http://localhost:8000/search?page=${page}&term=${search}`)
+        .then(res => {
+          console.log('data', res.data);
+          setData(res.data);
+        })
+        .catch((err) => {
+          console.log('broken dawg', err);
+        });
+    }
+  }, [page, search, filter]);
 
   useEffect(() => {
     const searchTerm = search.toLowerCase().trim();

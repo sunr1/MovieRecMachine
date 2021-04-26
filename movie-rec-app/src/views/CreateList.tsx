@@ -10,19 +10,38 @@ function CreateList() {
   })
   const [search, setSearch] = useState('');
   const [moviesList, setMoviesList] = useState<String[]>([]);
-  const [movies, setMovies] = useState([]);
+  const [data, setData] = useState([]);
+  const [display, setDisplay] = useState(data);
   const [page, setPage] = useState(0);
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/?page=${page}`)
-      .then(res => {
-        console.log('data', res.data);
-        setMovies(res.data);
-      })
-      .catch((err) => {
-        console.log('broken dawg', err);
-      })
-  }, [page]);
+    if (search.trim() === '') {
+      axios.get(`http://localhost:8000/?page=${page}`)
+        .then(res => {
+          console.log('data', res.data);
+          setData(res.data);
+        })
+        .catch((err) => {
+          console.log('broken dawg', err);
+        });
+    } else {
+      axios.get(`http://localhost:8000/search?page=${page}&term=${search}`)
+        .then(res => {
+          console.log('data', res.data);
+          setData(res.data);
+        })
+        .catch((err) => {
+          console.log('broken dawg', err);
+        });
+    }
+  }, [page, search]);
+
+  useEffect(() => {
+    const searchTerm = search.toLowerCase().trim();
+
+    // @ts-ignore
+    setDisplay(data.filter(movie => movie.title.toLowerCase().trim().includes(searchTerm)));
+  }, [data, search]);
 
   function handleCheckChange(e: any, movieId: string) {
     console.log(movieId);
@@ -45,7 +64,7 @@ function CreateList() {
   }
 
   function renderTableContents() {
-    return movies.map((movie: any, i) => {
+    return display.map((movie: any, i) => {
       let date = new Date(movie.release_date).toDateString();
       date = date.substring(4);
 
@@ -69,7 +88,8 @@ function CreateList() {
   }
 
   function renderMovies() {
-    if (movies.length === 0) {
+    console.log('display:', display);
+    if (display.length === 0) {
       return null;
     }
 
@@ -92,17 +112,23 @@ function CreateList() {
     )
   }
 
-  function pageBack() {
+  function pageBack(e: any) {
+    e.preventDefault();
+
     if (page > 0) {
       setPage(page - 1);
     }
   }
 
-  function pageNext() {
+  function pageNext(e: any) {
+    e.preventDefault();
+
     setPage(page + 1);
   }
 
-  async function createList() {
+  async function createList(e: any) {
+    e.preventDefault();
+
     const newList = await axios.post('http://localhost:8000/createList', listData)
     console.log('Made list:', listData.name);
 
