@@ -73,7 +73,7 @@ SET sql_mode = "";
 
 -- 2
 LOAD DATA 
-LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/credits.csv'
+LOCAL INFILE '/Users/sunr/Documents/Databases/credits.csv'
 INTO TABLE movie_dataset.credits 
 		FIELDS TERMINATED BY ','
 		ENCLOSED BY '"' 
@@ -81,7 +81,7 @@ INTO TABLE movie_dataset.credits
         IGNORE 1 LINES;
 
 LOAD DATA 
-LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/keywords.csv'
+LOCAL INFILE '/Users/sunr/Documents/Databases/keywords.csv'
 INTO TABLE movie_dataset.keywords 
 		FIELDS TERMINATED BY ','
 		ENCLOSED BY '"' 
@@ -89,7 +89,7 @@ INTO TABLE movie_dataset.keywords
         IGNORE 1 LINES;
         
 LOAD DATA 
-LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/links.csv'
+LOCAL INFILE '/Users/sunr/Documents/Databases/links.csv'
 INTO TABLE movie_dataset.links 
 		FIELDS TERMINATED BY ','
 		ENCLOSED BY '"' 
@@ -97,7 +97,7 @@ INTO TABLE movie_dataset.links
         IGNORE 1 LINES;
 
 LOAD DATA 
-LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/movies_metadata.csv'
+LOCAL INFILE '/Users/sunr/Documents/Databases/movies_metadata.csv'
 INTO TABLE movie_dataset.movies_metadata 
 		FIELDS TERMINATED BY ','
 		ENCLOSED BY '"' 
@@ -105,24 +105,82 @@ INTO TABLE movie_dataset.movies_metadata
         IGNORE 1 LINES;
 
 LOAD DATA 
-LOCAL INFILE '/Users/sunr/Documents/Databases/MovieRecMachine/ratings.csv'
+LOCAL INFILE '/Users/sunr/Documents/Databases/ratings.csv'
 INTO TABLE movie_dataset.ratings 
 		FIELDS TERMINATED BY ','
 		ENCLOSED BY '"' 
         LINES TERMINATED BY '\n'
         IGNORE 1 LINES;
 
-SELECT id, title, popularity
-FROM movies_metadata
-LIMIT 25;
-
 -- 3 
-DROP TABLE IF EXISTS userList;
-CREATE TABLE IF NOT EXISTS userList(
+DROP TABLE IF EXISTS movie_list;
+CREATE TABLE IF NOT EXISTS movie_list(
 		listId VARCHAR(70) NOT NULL,
         description TEXT,
+        date_created DATETIME, 
+        average_popularity DECIMAL(3, 1) NOT NULL,
+		average_rating DECIMAL(2,1) NOT NULL,
         PRIMARY KEY (listId)
 ) ENGINE=INNODB;   
 
--- INSERT INTO userList(listId, description, movieId)
--- VALUES (1, 'b', 1);
+CREATE INDEX popularity 
+ON movies_metadata(popularity);
+
+CREATE INDEX vote_average 
+ON movies_metadata(vote_average);
+
+CREATE INDEX title 
+ON movies_metadata(title);
+
+CREATE INDEX date_created 
+ON movies_list(date_created);
+
+CREATE INDEX average_popularity 
+ON movies_list(average_popularity);
+
+CREATE VIEW movie_metadata_view AS
+SELECT title, overview, vote_average, popularity, release_date
+FROM movies_metadata;
+
+CREATE VIEW movie_list_view AS
+SELECT title, overview, vote_average, popularity, runtime
+FROM movies_list;
+
+SELECT * FROM movie_list;
+
+
+-- stored procedure 
+DROP PROCEDURE IF EXISTS create_movie_list;
+
+DELIMITER // 
+
+CREATE PROCEDURE create_movie_list(IN listId VARCHAR(70), IN description TEXT, IN date_created DATETIME, IN average_popularity DECIMAL(3, 1), IN average_rating DECIMAL(2, 1))
+
+BEGIN
+
+	INSERT INTO movie_list (
+		listId, 
+        description, 
+        date_created, 
+        average_popularity, 
+        average_rating
+	)
+	VALUES (
+		listId, 
+        description, 
+        date_created, 
+        average_popularity, 
+        average_rating
+	);
+
+END // 
+
+DELIMITER ;
+
+CALL create_movie_list(
+        "Some Other List",
+        "List Description",
+        NOW(),
+        10.1,
+        3
+);
