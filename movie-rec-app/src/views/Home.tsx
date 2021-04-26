@@ -4,21 +4,22 @@ import { Link } from 'react-router-dom';
 import axios from "axios";
 
 function Home() {
+  const [filter, setFilter] = useState('');
   const [search, setSearch] = useState('');
   const [data, setData] = useState([]);
   const [display, setDisplay] = useState(data);
   const [page, setPage] = useState(0);
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/?page=${page}`)
+    axios.get(`http://localhost:8000/?page=${page}&filter=${filter}`)
       .then(res => {
         console.log('data', res.data);
         setData(res.data);
       })
       .catch((err) => {
         console.log('broken dawg', err);
-      })
-  }, [page]);
+      });
+  }, [page, filter]);
 
   useEffect(() => {
     const searchTerm = search.toLowerCase().trim();
@@ -35,6 +36,18 @@ function Home() {
 
   function pageNext() {
     setPage(page + 1);
+  }
+
+  function handleFilterClick(e: any) {
+    e.preventDefault();
+
+    if (e.target.name === 'none') {
+      setFilter('none');
+    } else if (e.target.name === 'popularity') {
+      setFilter('popularity');
+    } else {
+      setFilter('vote');
+    }
   }
 
   function renderTable() {
@@ -68,6 +81,18 @@ function Home() {
                value={search}
                onChange={e => setSearch(e.target.value)}
         />
+
+        <div style={{ paddingTop: '1rem' }}>
+          <Button toggle active={filter === 'none'} onClick={handleFilterClick} name='none'>
+            No Filter
+          </Button>
+          <Button toggle active={filter === 'popularity'} onClick={handleFilterClick} name='popularity'>
+            Average Popularity
+          </Button>
+          <Button toggle active={filter === 'vote'} onClick={handleFilterClick} name='vote'>
+            Vote Average
+          </Button>
+        </div>
 
         <div style={{ paddingTop: '1rem' }}>
           <Button onClick={pageBack}>{'<'} Page</Button>
